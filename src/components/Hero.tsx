@@ -1,133 +1,267 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { ArrowRight, Code2, Sparkles } from 'lucide-react';
+import { ArrowRight, Zap, Globe, Layers } from 'lucide-react';
+
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const orb1Ref = useRef<HTMLDivElement>(null);
+  const orb2Ref = useRef<HTMLDivElement>(null);
+  const orb3Ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        defaults: {
-          ease: 'power4.out'
-        }
-      });
-      tl.from('.hero-badge', {
-        y: 30,
+      // Main timeline
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+      // Stagger text lines
+      tl.from('.hero-line', {
+        y: 120,
         opacity: 0,
-        duration: 0.8
-      }).from(titleRef.current, {
-        y: 60,
-        opacity: 0,
-        duration: 1
-      }, '-=0.4').from('.hero-subtitle', {
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power4.out',
+      })
+      .from('.hero-subtitle', {
         y: 40,
         opacity: 0,
-        duration: 0.8
-      }, '-=0.6').from('.hero-buttons', {
+        duration: 0.8,
+      }, '-=0.6')
+      .from('.hero-cta', {
         y: 30,
         opacity: 0,
-        duration: 0.8
-      }, '-=0.4').from('.hero-visual', {
-        scale: 0.8,
+        duration: 0.6,
+        stagger: 0.1,
+      }, '-=0.4')
+      .from('.hero-stat', {
+        y: 40,
         opacity: 0,
-        duration: 1.2
-      }, '-=0.6').from('.floating-element', {
-        y: 50,
+        duration: 0.6,
+        stagger: 0.15,
+      }, '-=0.3')
+      .from('.hero-badge', {
+        scale: 0,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.2
-      }, '-=0.8');
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'back.out(1.7)',
+      }, '-=0.4');
 
-      // Floating animation for decorative elements
-      gsap.to('.float-1', {
-        y: -20,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      });
-      gsap.to('.float-2', {
-        y: -15,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 0.5
-      });
-      gsap.to('.float-3', {
-        y: -25,
+      // Floating orbs animation
+      gsap.to(orb1Ref.current, {
+        y: -40,
+        x: 20,
         duration: 4,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 1
       });
+
+      gsap.to(orb2Ref.current, {
+        y: 30,
+        x: -30,
+        duration: 5,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 0.5,
+      });
+
+      gsap.to(orb3Ref.current, {
+        y: -20,
+        x: -15,
+        duration: 3.5,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 1,
+      });
+
+      // Mouse parallax effect
+      const handleMouseMove = (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const moveX = (clientX - centerX) / 50;
+        const moveY = (clientY - centerY) / 50;
+
+        gsap.to('.parallax-slow', {
+          x: moveX * 0.5,
+          y: moveY * 0.5,
+          duration: 1,
+          ease: 'power2.out',
+        });
+
+        gsap.to('.parallax-fast', {
+          x: moveX * 1.5,
+          y: moveY * 1.5,
+          duration: 1,
+          ease: 'power2.out',
+        });
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      return () => window.removeEventListener('mousemove', handleMouseMove);
     }, heroRef);
+
     return () => ctx.revert();
   }, []);
-  return <section ref={heroRef} className="relative min-h-screen bg-gradient-hero flex items-center justify-center overflow-hidden pt-24">
-      {/* Glow effects */}
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gradient-glow animate-pulse-glow pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-glow animate-pulse-glow pointer-events-none" style={{
-      animationDelay: '1.5s'
-    }} />
 
-      <div className="container-custom relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 mb-8">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm text-primary font-medium">Crafting Digital Excellence</span>
+  return (
+    <section
+      ref={heroRef}
+      className="relative min-h-screen bg-background flex items-center overflow-hidden pt-20"
+    >
+      {/* Animated gradient orbs */}
+      <div
+        ref={orb1Ref}
+        className="parallax-slow absolute top-20 right-[10%] w-[500px] h-[500px] rounded-full opacity-30 blur-3xl pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(192 50% 50% / 0.4) 0%, transparent 70%)' }}
+      />
+      <div
+        ref={orb2Ref}
+        className="parallax-fast absolute bottom-20 left-[5%] w-[400px] h-[400px] rounded-full opacity-25 blur-3xl pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(200 60% 40% / 0.4) 0%, transparent 70%)' }}
+      />
+      <div
+        ref={orb3Ref}
+        className="parallax-slow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(180 40% 45% / 0.3) 0%, transparent 70%)' }}
+      />
+
+      {/* Grid pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
+                            linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      <div className="container-custom relative z-10 px-6">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left content */}
+          <div ref={textRef} className="space-y-8">
+            {/* Title */}
+            <div className="overflow-hidden">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[0.9] tracking-tight">
+                <span className="hero-line block">We craft</span>
+                <span className="hero-line block text-gradient">digital</span>
+                <span className="hero-line block">experiences</span>
+              </h1>
+            </div>
+
+            {/* Subtitle */}
+            <p className="hero-subtitle text-lg sm:text-xl text-muted-foreground max-w-md leading-relaxed">
+              Transforming bold ideas into powerful software solutions that scale with your ambition and drive measurable growth.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-4 pt-4">
+              <a href="#contact" className="hero-cta btn-primary group">
+                Start your project
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
+              <a href="#projects" className="hero-cta btn-outline">
+                Explore work
+              </a>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border">
+              <div className="hero-stat">
+                <div className="text-3xl sm:text-4xl font-bold text-gradient">50+</div>
+                <div className="text-sm text-muted-foreground mt-1">Projects delivered</div>
+              </div>
+              <div className="hero-stat">
+                <div className="text-3xl sm:text-4xl font-bold text-gradient">98%</div>
+                <div className="text-sm text-muted-foreground mt-1">Client satisfaction</div>
+              </div>
+              <div className="hero-stat">
+                <div className="text-3xl sm:text-4xl font-bold text-gradient">5+</div>
+                <div className="text-sm text-muted-foreground mt-1">Years experience</div>
+              </div>
+            </div>
           </div>
 
-          <h1 ref={titleRef} className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-            We Build{' '}
-            <span className="text-gradient">Software</span>
-            <br />
-            That Drives Growth
-          </h1>
+          {/* Right visual */}
+          <div className="relative lg:h-[600px] flex items-center justify-center">
+            {/* Central card */}
+            <div className="relative w-full max-w-md aspect-square">
+              {/* Rotating border */}
+              <div 
+                className="absolute inset-0 rounded-3xl p-[2px] animate-spin"
+                style={{ 
+                  background: 'conic-gradient(from 0deg, hsl(192 35% 52%), transparent, hsl(192 35% 52%))',
+                  animationDuration: '8s',
+                }}
+              >
+                <div className="w-full h-full rounded-3xl bg-background" />
+              </div>
 
-          <p className="hero-subtitle text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Transform your vision into powerful digital solutions. We specialize in
-            creating innovative software that scales with your business.
-          </p>
+              {/* Inner content */}
+              <div className="absolute inset-2 rounded-2xl bg-gradient-card border border-border flex items-center justify-center overflow-hidden">
+                {/* Code lines decoration */}
+                <div className="absolute inset-0 p-8 opacity-30">
+                  {[...Array(12)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-3 rounded-full mb-3"
+                      style={{
+                        width: `${Math.random() * 60 + 20}%`,
+                        background: i % 3 === 0 ? 'hsl(var(--primary))' : 'hsl(var(--muted))',
+                        opacity: 0.5 + Math.random() * 0.5,
+                      }}
+                    />
+                  ))}
+                </div>
 
-          <div className="hero-buttons flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#contact" className="btn-primary group">
-              Start Your Project
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a href="#projects" className="btn-outline">
-              View Our Work
-            </a>
-          </div>
-        </div>
+                {/* Center logo mark */}
+                <div className="relative z-10 w-32 h-32 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center shadow-glow">
+                  <div className="text-5xl font-bold text-gradient">IX</div>
+                </div>
+              </div>
+            </div>
 
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-10 floating-element float-1">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-card border border-border flex items-center justify-center shadow-card">
-            <Code2 className="w-8 h-8 text-primary" />
-          </div>
-        </div>
+            {/* Floating badges */}
+            <div className="hero-badge absolute top-10 left-0 lg:-left-4 glass rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold text-sm">Fast Delivery</div>
+                <div className="text-xs text-muted-foreground">2x faster sprints</div>
+              </div>
+            </div>
 
-        <div className="absolute top-40 right-16 floating-element float-2">
-          <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center">
-            <div className="w-4 h-4 rounded-full bg-primary" />
-          </div>
-        </div>
+            <div className="hero-badge absolute top-1/3 right-0 lg:-right-8 glass rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Globe className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold text-sm">Global Reach</div>
+                <div className="text-xs text-muted-foreground">Clients worldwide</div>
+              </div>
+            </div>
 
-        <div className="absolute bottom-32 left-20 floating-element float-3">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-card border border-border flex items-center justify-center shadow-card">
-            <Sparkles className="w-10 h-10 text-primary" />
-          </div>
-        </div>
-
-        {/* Visual element */}
-        <div className="hero-visual mt-16 relative mx-auto max-w-3xl">
-          <div className="relative rounded-2xl overflow-hidden shadow-glow">
-            
+            <div className="hero-badge absolute bottom-10 left-4 lg:left-0 glass rounded-2xl p-4 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Layers className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="font-semibold text-sm">Full Stack</div>
+                <div className="text-xs text-muted-foreground">End-to-end solutions</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section>;
+
+      {/* Bottom gradient fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+    </section>
+  );
 };
+
 export default Hero;
