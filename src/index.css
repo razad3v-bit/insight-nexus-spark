@@ -151,11 +151,16 @@
   }
 
   .section-padding {
-    @apply py-24 lg:py-32 px-6;
+    @apply py-16 sm:py-20 lg:py-28 xl:py-32;
   }
 
   .container-custom {
-    @apply max-w-7xl mx-auto;
+    @apply w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20;
+  }
+  
+  .full-width-section {
+    @apply w-screen relative;
+    margin-left: calc(-50vw + 50%);
   }
 
   /* Scrollbar styling */
