@@ -78,23 +78,28 @@ const About = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="about" className="section-padding relative overflow-hidden">
+    <section 
+      ref={sectionRef} 
+      id="about" 
+      className="relative w-screen py-16 sm:py-20 lg:py-28 xl:py-32 overflow-hidden"
+      style={{ marginLeft: 'calc(-50vw + 50%)' }}
+    >
       {/* Background glow */}
-      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-gradient-glow -translate-y-1/2 pointer-events-none" />
+      <div className="absolute top-1/2 left-0 w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] bg-gradient-glow -translate-y-1/2 pointer-events-none" />
 
-      <div className="container-custom relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+      <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-12 sm:mb-16 lg:mb-20">
           <div className="about-content">
-            <span className="text-primary font-medium mb-4 block">About Us</span>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            <span className="text-primary font-medium mb-3 sm:mb-4 block text-sm sm:text-base">About Us</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
               Innovating Since <span className="text-gradient">2016</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+            <p className="text-muted-foreground text-base sm:text-lg mb-4 sm:mb-6 leading-relaxed">
               At Insightexus, we're passionate about turning complex challenges into elegant
               digital solutions. Our team of experts combines technical excellence with creative
               thinking to deliver software that makes a difference.
             </p>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
               We believe in building long-term partnerships with our clients, understanding their
               unique needs, and crafting solutions that drive real business results. From startups
               to enterprises, we've helped businesses across industries achieve their digital goals.
@@ -102,12 +107,12 @@ const About = () => {
           </div>
 
           <div className="about-image relative">
-            <div className="aspect-square rounded-2xl bg-gradient-card border border-border p-8 shadow-card">
+            <div className="aspect-square rounded-2xl bg-gradient-card border border-border p-6 sm:p-8 shadow-card">
               <div className="w-full h-full rounded-xl bg-background/50 border border-border flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-glow opacity-50" />
                 <div className="relative z-10 text-center">
-                  <div className="text-6xl font-bold text-gradient mb-2">IE</div>
-                  <div className="text-muted-foreground">Innovation • Excellence</div>
+                  <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gradient mb-2">IE</div>
+                  <div className="text-muted-foreground text-sm sm:text-base">Innovation • Excellence</div>
                 </div>
               </div>
             </div>
@@ -117,17 +122,17 @@ const About = () => {
         {/* Stats */}
         <div
           ref={statsRef}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
         >
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="stat-item text-center p-8 rounded-2xl bg-gradient-card border border-border"
+              className="stat-item text-center p-6 sm:p-8 rounded-2xl bg-gradient-card border border-border"
             >
-              <div className="stat-value text-4xl lg:text-5xl font-bold text-gradient mb-2">
+              <div className="stat-value text-3xl sm:text-4xl lg:text-5xl font-bold text-gradient mb-1 sm:mb-2">
                 {stat.value}
               </div>
-              <div className="text-muted-foreground font-medium">{stat.label}</div>
+              <div className="text-muted-foreground text-sm sm:text-base font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
