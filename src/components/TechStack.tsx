@@ -25,8 +25,6 @@ const technologies = [
 
 const TechStack = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const marquee1Ref = useRef<HTMLDivElement>(null);
-  const marquee2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -46,36 +44,7 @@ const TechStack = () => {
       );
     }, sectionRef);
 
-    // Separate marquee animations outside of context for proper cleanup
-    let anim1: gsap.core.Tween | null = null;
-    let anim2: gsap.core.Tween | null = null;
-
-    if (marquee1Ref.current) {
-      anim1 = gsap.to(marquee1Ref.current, {
-        x: '-50%',
-        duration: 30,
-        ease: 'linear',
-        repeat: -1,
-      });
-    }
-
-    if (marquee2Ref.current) {
-      anim2 = gsap.fromTo(marquee2Ref.current, 
-        { x: '-50%' },
-        {
-          x: '0%',
-          duration: 35,
-          ease: 'linear',
-          repeat: -1,
-        }
-      );
-    }
-
-    return () => {
-      ctx.revert();
-      anim1?.kill();
-      anim2?.kill();
-    };
+    return () => ctx.revert();
   }, []);
 
   // Create reversed array for second row
@@ -104,12 +73,12 @@ const TechStack = () => {
         </div>
       </div>
 
-      {/* Marquee rows */}
+      {/* CSS-based Marquee rows - smoother than GSAP for continuous animation */}
       <div className="space-y-6">
         {/* Row 1 - moves left */}
         <div className="relative overflow-hidden">
-          <div ref={marquee1Ref} className="flex gap-6 whitespace-nowrap w-fit">
-            {[...technologies, ...technologies].map((tech, index) => (
+          <div className="marquee-row-left flex gap-6 whitespace-nowrap">
+            {[...technologies, ...technologies, ...technologies].map((tech, index) => (
               <div
                 key={index}
                 className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-card border border-border hover:border-primary/30 transition-colors shrink-0"
@@ -128,8 +97,8 @@ const TechStack = () => {
 
         {/* Row 2 - moves right */}
         <div className="relative overflow-hidden">
-          <div ref={marquee2Ref} className="flex gap-6 whitespace-nowrap w-fit">
-            {[...reversedTechnologies, ...reversedTechnologies].map((tech, index) => (
+          <div className="marquee-row-right flex gap-6 whitespace-nowrap">
+            {[...reversedTechnologies, ...reversedTechnologies, ...reversedTechnologies].map((tech, index) => (
               <div
                 key={index}
                 className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-card border border-border hover:border-primary/30 transition-colors shrink-0"
@@ -146,6 +115,31 @@ const TechStack = () => {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes marquee-left {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.333%); }
+        }
+        
+        @keyframes marquee-right {
+          0% { transform: translateX(-33.333%); }
+          100% { transform: translateX(0); }
+        }
+        
+        .marquee-row-left {
+          animation: marquee-left 40s linear infinite;
+        }
+        
+        .marquee-row-right {
+          animation: marquee-right 45s linear infinite;
+        }
+        
+        .marquee-row-left:hover,
+        .marquee-row-right:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 };
