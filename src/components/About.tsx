@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { CheckCircle2, Award, Users, Rocket, Target, Heart } from 'lucide-react';
+import { CheckCircle2, Award, Users, Rocket, Target, Heart, Sparkles, TrendingUp, Zap } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,27 +25,35 @@ const About = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.about-content', {
-        scrollTrigger: {
-          trigger: '.about-content',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        x: -60,
-        opacity: 0,
-        duration: 1,
-      });
+      gsap.fromTo('.about-content', 
+        { x: -60, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.about-content',
+            start: 'top 85%',
+            once: true,
+          },
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+        }
+      );
 
-      gsap.from('.about-visual', {
-        scrollTrigger: {
-          trigger: '.about-visual',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        x: 60,
-        opacity: 0,
-        duration: 1,
-      });
+      gsap.fromTo('.about-visual', 
+        { x: 60, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.about-visual',
+            start: 'top 85%',
+            once: true,
+          },
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+        }
+      );
 
       // Parallax effect on visual elements
       gsap.to('.parallax-element', {
@@ -58,51 +66,37 @@ const About = () => {
         },
       });
 
-      // Counter animation for stats
-      const statItems = statsRef.current?.querySelectorAll('.stat-value');
-      statItems?.forEach((stat) => {
-        const target = parseInt(stat.textContent?.replace(/\D/g, '') || '0');
-        const suffix = stat.textContent?.replace(/\d/g, '') || '';
-
-        gsap.from(stat, {
+      gsap.fromTo('.stat-item', 
+        { y: 40, opacity: 0 },
+        {
           scrollTrigger: {
-            trigger: stat,
+            trigger: statsRef.current,
             start: 'top 85%',
-            toggleActions: 'play none none reverse',
+            once: true,
           },
-          textContent: 0,
-          duration: 2,
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
           ease: 'power2.out',
-          snap: { textContent: 1 },
-          onUpdate: function () {
-            stat.textContent = Math.ceil(parseFloat(stat.textContent || '0')) + suffix;
+        }
+      );
+
+      gsap.fromTo('.value-card', 
+        { y: 40, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.values-grid',
+            start: 'top 85%',
+            once: true,
           },
-        });
-      });
-
-      gsap.from('.stat-item', {
-        scrollTrigger: {
-          trigger: statsRef.current,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-      });
-
-      gsap.from('.value-card', {
-        scrollTrigger: {
-          trigger: '.values-grid',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-      });
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();
@@ -165,55 +159,63 @@ const About = () => {
           </div>
 
           <div className="about-visual relative">
-            {/* Main visual container */}
-            <div className="relative">
-              {/* Floating decorative elements */}
-              <div className="parallax-element absolute -top-8 -right-8 w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent border border-primary/10 flex items-center justify-center">
-                <Rocket className="w-10 h-10 text-primary" />
-              </div>
-              <div className="parallax-element absolute -bottom-6 -left-6 w-20 h-20 rounded-full bg-gradient-to-br from-purple-500/20 to-transparent border border-purple-500/10 flex items-center justify-center">
-                <Award className="w-8 h-8 text-purple-400" />
-              </div>
-
-              {/* Main card */}
-              <div className="aspect-square rounded-3xl bg-gradient-card border border-border p-8 shadow-card overflow-hidden">
-                <div className="w-full h-full rounded-2xl bg-background/50 border border-border relative overflow-hidden">
-                  {/* Animated gradient background */}
-                  <div className="absolute inset-0 bg-gradient-glow opacity-50" />
-                  
-                  {/* Grid pattern */}
-                  <div className="absolute inset-0 opacity-20" style={{
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-                    backgroundSize: '30px 30px',
-                  }} />
-
-                  {/* Center content */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      {/* Animated rings */}
-                      <div className="relative">
-                        <div className="absolute inset-0 w-32 h-32 rounded-full border border-primary/20 animate-ping" style={{ animationDuration: '3s' }} />
-                        <div className="absolute inset-0 w-32 h-32 rounded-full border border-primary/30 animate-pulse" />
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 to-transparent border border-primary/30 flex items-center justify-center mx-auto">
-                          <div className="text-4xl sm:text-5xl font-bold text-gradient">IE</div>
-                        </div>
-                      </div>
-                      <div className="mt-6 text-muted-foreground text-sm">Innovation • Excellence</div>
-                    </div>
-                  </div>
-
-                  {/* Floating badges */}
-                  <div className="absolute top-8 left-8 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium">
-                    🚀 Fast Delivery
-                  </div>
-                  <div className="absolute bottom-8 right-8 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium">
-                    ⭐ 5-Star Rated
-                  </div>
-                  <div className="absolute top-1/2 -translate-y-1/2 right-8 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium">
-                    🔒 Secure
-                  </div>
+            {/* Redesigned visual - Abstract floating elements instead of box */}
+            <div className="relative h-[400px] sm:h-[500px] lg:h-[600px]">
+              {/* Main center element */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-56 sm:h-56">
+                <div className="w-full h-full rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 flex items-center justify-center backdrop-blur-sm animate-pulse">
+                  <div className="text-5xl sm:text-6xl font-bold text-gradient">IE</div>
                 </div>
+                {/* Rotating ring */}
+                <div className="absolute inset-0 rounded-3xl border border-primary/10 animate-spin" style={{ animationDuration: '20s' }} />
               </div>
+
+              {/* Floating decorative elements */}
+              <div className="parallax-element absolute top-8 right-8 sm:right-16 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/20 flex items-center justify-center backdrop-blur-sm">
+                <Rocket className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400" />
+              </div>
+
+              <div className="parallax-element absolute top-20 left-4 sm:left-8 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/10 border border-purple-500/20 flex items-center justify-center backdrop-blur-sm">
+                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
+              </div>
+
+              <div className="parallax-element absolute bottom-16 right-4 sm:right-12 w-18 h-18 sm:w-22 sm:h-22 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/20 flex items-center justify-center backdrop-blur-sm p-4 sm:p-5">
+                <TrendingUp className="w-7 h-7 sm:w-9 sm:h-9 text-emerald-400" />
+              </div>
+
+              <div className="parallax-element absolute bottom-24 left-8 sm:left-16 w-14 h-14 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/20 flex items-center justify-center backdrop-blur-sm">
+                <Zap className="w-5 h-5 sm:w-7 sm:h-7 text-orange-400" />
+              </div>
+
+              <div className="parallax-element absolute top-1/3 right-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-rose-500/20 to-red-500/10 border border-rose-500/20 flex items-center justify-center backdrop-blur-sm">
+                <Award className="w-5 h-5 sm:w-7 sm:h-7 text-rose-400" />
+              </div>
+
+              {/* Floating stats badges */}
+              <div className="absolute top-4 left-1/4 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium shadow-lg">
+                🚀 Fast Delivery
+              </div>
+              <div className="absolute bottom-8 left-1/3 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium shadow-lg">
+                ⭐ 5-Star Rated
+              </div>
+              <div className="absolute top-1/2 right-0 translate-x-4 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium shadow-lg">
+                🔒 Secure
+              </div>
+
+              {/* Connecting lines (decorative) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 400 400">
+                <defs>
+                  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                    <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M200,200 L320,80" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
+                <path d="M200,200 L80,120" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
+                <path d="M200,200 L320,300" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
+                <path d="M200,200 L120,320" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
+              </svg>
             </div>
           </div>
         </div>

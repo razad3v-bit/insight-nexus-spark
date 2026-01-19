@@ -86,11 +86,15 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       ref={preloaderRef}
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
     >
-      {/* Left panel - solid, no border */}
-      <div className="preloader-left absolute top-0 left-0 w-1/2 h-full bg-background" />
+      {/* Left panel - solid background, no borders */}
+      <div className="preloader-left absolute top-0 left-0 w-1/2 h-full bg-background">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
+      </div>
       
-      {/* Right panel - solid, no border */}
-      <div className="preloader-right absolute top-0 right-0 w-1/2 h-full bg-background" />
+      {/* Right panel - solid background, no borders */}
+      <div className="preloader-right absolute top-0 right-0 w-1/2 h-full bg-background">
+        <div className="absolute inset-0 bg-gradient-to-l from-primary/5 to-transparent" />
+      </div>
 
       {/* Content */}
       <div className="preloader-content relative z-10 flex flex-col items-center">
