@@ -25,45 +25,61 @@ const technologies = [
 
 const TechStack = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const marquee1Ref = useRef<HTMLDivElement>(null);
+  const marquee2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.tech-header', {
-        scrollTrigger: {
-          trigger: '.tech-header',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-      });
-
-      // Marquee animation
-      const marquee1 = document.querySelector('.marquee-1');
-      const marquee2 = document.querySelector('.marquee-2');
-
-      if (marquee1) {
-        gsap.to(marquee1, {
-          x: '-50%',
-          duration: 20,
-          ease: 'linear',
-          repeat: -1,
-        });
-      }
-
-      if (marquee2) {
-        gsap.to(marquee2, {
-          x: '0%',
-          duration: 25,
-          ease: 'linear',
-          repeat: -1,
-        });
-      }
+      gsap.fromTo('.tech-header', 
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.tech-header',
+            start: 'top 85%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+        }
+      );
     }, sectionRef);
 
-    return () => ctx.revert();
+    // Separate marquee animations outside of context for proper cleanup
+    let anim1: gsap.core.Tween | null = null;
+    let anim2: gsap.core.Tween | null = null;
+
+    if (marquee1Ref.current) {
+      anim1 = gsap.to(marquee1Ref.current, {
+        x: '-50%',
+        duration: 30,
+        ease: 'linear',
+        repeat: -1,
+      });
+    }
+
+    if (marquee2Ref.current) {
+      anim2 = gsap.fromTo(marquee2Ref.current, 
+        { x: '-50%' },
+        {
+          x: '0%',
+          duration: 35,
+          ease: 'linear',
+          repeat: -1,
+        }
+      );
+    }
+
+    return () => {
+      ctx.revert();
+      anim1?.kill();
+      anim2?.kill();
+    };
   }, []);
+
+  // Create reversed array for second row
+  const reversedTechnologies = [...technologies].reverse();
 
   return (
     <section
@@ -92,11 +108,11 @@ const TechStack = () => {
       <div className="space-y-6">
         {/* Row 1 - moves left */}
         <div className="relative overflow-hidden">
-          <div className="marquee-1 flex gap-6 whitespace-nowrap">
+          <div ref={marquee1Ref} className="flex gap-6 whitespace-nowrap w-fit">
             {[...technologies, ...technologies].map((tech, index) => (
               <div
                 key={index}
-                className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-card border border-border hover:border-primary/30 transition-colors"
+                className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-card border border-border hover:border-primary/30 transition-colors shrink-0"
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
                   <span className="text-primary font-bold text-sm">{tech.name.slice(0, 2)}</span>
@@ -112,11 +128,11 @@ const TechStack = () => {
 
         {/* Row 2 - moves right */}
         <div className="relative overflow-hidden">
-          <div className="marquee-2 flex gap-6 whitespace-nowrap" style={{ transform: 'translateX(-50%)' }}>
-            {[...technologies.reverse(), ...technologies].map((tech, index) => (
+          <div ref={marquee2Ref} className="flex gap-6 whitespace-nowrap w-fit">
+            {[...reversedTechnologies, ...reversedTechnologies].map((tech, index) => (
               <div
                 key={index}
-                className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-card border border-border hover:border-primary/30 transition-colors"
+                className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-card border border-border hover:border-primary/30 transition-colors shrink-0"
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
                   <span className="text-primary font-bold text-sm">{tech.name.slice(0, 2)}</span>

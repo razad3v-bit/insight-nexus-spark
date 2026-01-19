@@ -86,28 +86,36 @@ const Projects = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.projects-header', {
-        scrollTrigger: {
-          trigger: '.projects-header',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-      });
+      gsap.fromTo('.projects-header', 
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.projects-header',
+            start: 'top 85%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+        }
+      );
 
-      gsap.from('.project-card', {
-        scrollTrigger: {
-          trigger: '.projects-grid',
-          start: 'top 75%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 80,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-      });
+      gsap.fromTo('.project-card', 
+        { y: 80, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.projects-grid',
+            start: 'top 80%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: 'power2.out',
+        }
+      );
 
       // Parallax for decorative elements
       gsap.to('.parallax-shape', {

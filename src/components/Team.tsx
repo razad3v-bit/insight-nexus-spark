@@ -61,28 +61,36 @@ const Team = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.team-header', {
-        scrollTrigger: {
-          trigger: '.team-header',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-      });
+      gsap.fromTo('.team-header', 
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.team-header',
+            start: 'top 85%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+        }
+      );
 
-      gsap.from('.team-card', {
-        scrollTrigger: {
-          trigger: '.team-grid',
-          start: 'top 75%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-      });
+      gsap.fromTo('.team-card', 
+        { y: 60, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.team-grid',
+            start: 'top 80%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();

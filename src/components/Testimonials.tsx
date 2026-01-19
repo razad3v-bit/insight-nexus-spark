@@ -50,27 +50,35 @@ const Testimonials = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.testimonials-header', {
-        scrollTrigger: {
-          trigger: '.testimonials-header',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-      });
+      gsap.fromTo('.testimonials-header', 
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.testimonials-header',
+            start: 'top 85%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+        }
+      );
 
-      gsap.from('.testimonial-visual', {
-        scrollTrigger: {
-          trigger: '.testimonial-visual',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        scale: 0.8,
-        opacity: 0,
-        duration: 1,
-      });
+      gsap.fromTo('.testimonial-visual', 
+        { scale: 0.9, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.testimonial-visual',
+            start: 'top 85%',
+            once: true,
+          },
+          scale: 1,
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();

@@ -61,31 +61,42 @@ const services = [
 
 const Services = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.services-header', {
-        scrollTrigger: {
-          trigger: '.services-header',
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-      });
+      // Header animation
+      gsap.fromTo('.services-header', 
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.services-header',
+            start: 'top 85%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+        }
+      );
 
-      gsap.from('.service-card', {
-        scrollTrigger: {
-          trigger: '.services-grid',
-          start: 'top 75%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-      });
+      // Cards animation
+      gsap.fromTo('.service-card', 
+        { y: 60, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '.services-grid',
+            start: 'top 80%',
+            once: true,
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power2.out',
+        }
+      );
 
       // Parallax floating icons
       gsap.to('.floating-icon', {
