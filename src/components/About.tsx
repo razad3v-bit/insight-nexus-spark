@@ -1,15 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { CheckCircle2, Award, Users, Rocket, Target, Heart, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { CheckCircle2, Award, Users, Rocket, Target, Heart, Code, Globe, Shield, Lightbulb } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { value: '150+', label: 'Projects Delivered', icon: Rocket },
-  { value: '50+', label: 'Happy Clients', icon: Heart },
-  { value: '8+', label: 'Years Experience', icon: Award },
-  { value: '25+', label: 'Team Members', icon: Users },
+  { value: 150, suffix: '+', label: 'Projects Delivered', icon: Rocket },
+  { value: 50, suffix: '+', label: 'Happy Clients', icon: Heart },
+  { value: 8, suffix: '+', label: 'Years Experience', icon: Award },
+  { value: 25, suffix: '+', label: 'Team Members', icon: Users },
 ];
 
 const values = [
@@ -19,9 +19,56 @@ const values = [
   { title: 'Transparent Process', description: 'Open communication and honest feedback at every stage.' },
 ];
 
+// Counter hook for count-up animation
+const useCountUp = (target: number, duration: number = 2000, startCounting: boolean = false) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!startCounting) return;
+
+    let startTime: number | null = null;
+    let animationFrame: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(easeOut * target));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [target, duration, startCounting]);
+
+  return count;
+};
+
+const StatCounter = ({ stat, isVisible }: { stat: typeof stats[0], isVisible: boolean }) => {
+  const count = useCountUp(stat.value, 2500, isVisible);
+
+  return (
+    <div className="stat-item group text-center p-6 sm:p-8 rounded-2xl bg-gradient-card border border-border hover:border-primary/30 transition-all duration-500">
+      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+        <stat.icon className="w-6 h-6 text-primary" />
+      </div>
+      <div className="stat-value text-3xl sm:text-4xl lg:text-5xl font-bold text-gradient mb-1 sm:mb-2">
+        {count}{stat.suffix}
+      </div>
+      <div className="text-muted-foreground text-sm sm:text-base font-medium">{stat.label}</div>
+    </div>
+  );
+};
+
 const About = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
+  const [statsVisible, setStatsVisible] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -64,6 +111,14 @@ const About = () => {
           end: 'bottom top',
           scrub: 1,
         },
+      });
+
+      // Trigger count-up when stats section is visible
+      ScrollTrigger.create({
+        trigger: statsRef.current,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => setStatsVisible(true),
       });
 
       gsap.fromTo('.stat-item', 
@@ -159,85 +214,111 @@ const About = () => {
           </div>
 
           <div className="about-visual relative">
-            {/* Redesigned visual - Abstract floating elements instead of box */}
+            {/* Redesigned visual - Hexagonal network design */}
             <div className="relative h-[400px] sm:h-[500px] lg:h-[600px]">
-              {/* Main center element */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-56 sm:h-56">
-                <div className="w-full h-full rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 flex items-center justify-center backdrop-blur-sm animate-pulse">
-                  <div className="text-5xl sm:text-6xl font-bold text-gradient">IE</div>
+              {/* Central hexagon grid */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <svg width="300" height="300" viewBox="0 0 300 300" className="sm:w-[350px] sm:h-[350px]">
+                  {/* Animated connecting lines */}
+                  <defs>
+                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+                      <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
+                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  {/* Hexagon paths */}
+                  <polygon points="150,30 220,70 220,150 150,190 80,150 80,70" fill="none" stroke="url(#lineGrad)" strokeWidth="1" className="animate-pulse" />
+                  <polygon points="150,50 200,80 200,140 150,170 100,140 100,80" fill="hsl(var(--primary) / 0.05)" stroke="hsl(var(--primary) / 0.3)" strokeWidth="1" />
+                  <polygon points="150,70 180,90 180,130 150,150 120,130 120,90" fill="hsl(var(--primary) / 0.1)" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1.5" filter="url(#glow)" />
+                  
+                  {/* Connecting dots */}
+                  <circle cx="150" cy="30" r="4" fill="hsl(var(--primary))" className="animate-pulse" />
+                  <circle cx="220" cy="70" r="3" fill="hsl(var(--primary) / 0.7)" />
+                  <circle cx="220" cy="150" r="4" fill="hsl(var(--primary))" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+                  <circle cx="150" cy="190" r="3" fill="hsl(var(--primary) / 0.7)" />
+                  <circle cx="80" cy="150" r="4" fill="hsl(var(--primary))" className="animate-pulse" style={{ animationDelay: '1s' }} />
+                  <circle cx="80" cy="70" r="3" fill="hsl(var(--primary) / 0.7)" />
+                  
+                  {/* Orbiting elements */}
+                  <g className="animate-spin" style={{ transformOrigin: '150px 110px', animationDuration: '20s' }}>
+                    <circle cx="250" cy="110" r="6" fill="hsl(var(--primary) / 0.3)" />
+                    <circle cx="50" cy="110" r="6" fill="hsl(var(--primary) / 0.3)" />
+                  </g>
+                </svg>
+              </div>
+
+              {/* Floating feature cards */}
+              <div className="parallax-element absolute top-4 right-4 sm:right-12 p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-border shadow-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <Code className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Clean Code</div>
+                    <div className="text-xs text-muted-foreground">Best practices</div>
+                  </div>
                 </div>
-                {/* Rotating ring */}
-                <div className="absolute inset-0 rounded-3xl border border-primary/10 animate-spin" style={{ animationDuration: '20s' }} />
               </div>
 
-              {/* Floating decorative elements */}
-              <div className="parallax-element absolute top-8 right-8 sm:right-16 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/20 flex items-center justify-center backdrop-blur-sm">
-                <Rocket className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400" />
+              <div className="parallax-element absolute top-16 left-0 sm:left-4 p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-border shadow-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Global Reach</div>
+                    <div className="text-xs text-muted-foreground">Worldwide clients</div>
+                  </div>
+                </div>
               </div>
 
-              <div className="parallax-element absolute top-20 left-4 sm:left-8 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/10 border border-purple-500/20 flex items-center justify-center backdrop-blur-sm">
-                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
+              <div className="parallax-element absolute bottom-20 right-0 sm:right-8 p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-border shadow-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Secure</div>
+                    <div className="text-xs text-muted-foreground">Enterprise-grade</div>
+                  </div>
+                </div>
               </div>
 
-              <div className="parallax-element absolute bottom-16 right-4 sm:right-12 w-18 h-18 sm:w-22 sm:h-22 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/20 flex items-center justify-center backdrop-blur-sm p-4 sm:p-5">
-                <TrendingUp className="w-7 h-7 sm:w-9 sm:h-9 text-emerald-400" />
+              <div className="parallax-element absolute bottom-8 left-4 sm:left-12 p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-border shadow-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <Lightbulb className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Innovative</div>
+                    <div className="text-xs text-muted-foreground">Future-ready</div>
+                  </div>
+                </div>
               </div>
 
-              <div className="parallax-element absolute bottom-24 left-8 sm:left-16 w-14 h-14 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/20 flex items-center justify-center backdrop-blur-sm">
-                <Zap className="w-5 h-5 sm:w-7 sm:h-7 text-orange-400" />
-              </div>
-
-              <div className="parallax-element absolute top-1/3 right-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-rose-500/20 to-red-500/10 border border-rose-500/20 flex items-center justify-center backdrop-blur-sm">
-                <Award className="w-5 h-5 sm:w-7 sm:h-7 text-rose-400" />
-              </div>
-
-              {/* Floating stats badges */}
-              <div className="absolute top-4 left-1/4 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium shadow-lg">
-                🚀 Fast Delivery
-              </div>
-              <div className="absolute bottom-8 left-1/3 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium shadow-lg">
-                ⭐ 5-Star Rated
-              </div>
-              <div className="absolute top-1/2 right-0 translate-x-4 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm border border-border text-xs font-medium shadow-lg">
-                🔒 Secure
-              </div>
-
-              {/* Connecting lines (decorative) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 400 400">
-                <defs>
-                  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                    <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d="M200,200 L320,80" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
-                <path d="M200,200 L80,120" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
-                <path d="M200,200 L320,300" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
-                <path d="M200,200 L120,320" stroke="url(#lineGradient)" strokeWidth="1" fill="none" />
-              </svg>
+              {/* Decorative gradient orbs */}
+              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
             </div>
           </div>
         </div>
 
-        {/* Stats */}
+        {/* Stats with Count-up animation */}
         <div
           ref={statsRef}
           className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-16 sm:mb-20"
         >
           {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="stat-item group text-center p-6 sm:p-8 rounded-2xl bg-gradient-card border border-border hover:border-primary/30 transition-all duration-500"
-            >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <stat.icon className="w-6 h-6 text-primary" />
-              </div>
-              <div className="stat-value text-3xl sm:text-4xl lg:text-5xl font-bold text-gradient mb-1 sm:mb-2">
-                {stat.value}
-              </div>
-              <div className="text-muted-foreground text-sm sm:text-base font-medium">{stat.label}</div>
-            </div>
+            <StatCounter key={index} stat={stat} isVisible={statsVisible} />
           ))}
         </div>
 
