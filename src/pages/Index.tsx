@@ -12,6 +12,9 @@ import Team from '@/components/Team';
 import TechStack from '@/components/TechStack';
 import Blog from '@/components/Blog';
 import FAQ from '@/components/FAQ';
+import ImpactMetrics from '@/components/ImpactMetrics';
+import Industries from '@/components/Industries';
+import Newsletter from '@/components/Newsletter';
 import CTA from '@/components/CTA';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
@@ -29,12 +32,15 @@ const Index = () => {
         <About />
         <WhyChooseUs />
         <Projects />
+        <ImpactMetrics />
         <Process />
         <Testimonials />
+        <Industries />
         <FAQ />
         <Team />
         <TechStack />
         <Blog />
+        <Newsletter />
         <CTA />
         <Contact />
         <Footer />

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { Menu, X } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const Navbar = () => {
   const navRef = useRef<HTMLElement>(null);
@@ -41,11 +42,29 @@ const Navbar = () => {
   }, [isOpen]);
 
   const navLinks = [
-    { name: 'Services', href: '#services' },
-    { name: 'About', href: '#about' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Contact', href: '#contact' },
+    { name: "Services", href: "#services" },
+    { name: "About", href: "#about" },
+    { name: "Projects", href: "#projects" },
+    { name: "Careers", href: "/careers" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "#contact" },
   ];
+
+  const NavItem = ({ name, href, className }: { name: string; href: string; className: string }) => {
+    const common = { className, onClick: handleLinkClick };
+    if (href.startsWith("/")) {
+      return (
+        <Link key={name} to={href} {...common}>
+          {name}
+        </Link>
+      );
+    }
+    return (
+      <a key={name} href={href} {...common}>
+        {name}
+      </a>
+    );
+  };
 
   const handleLinkClick = () => {
     setIsOpen(false);
@@ -62,29 +81,25 @@ const Navbar = () => {
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <a href="#" className="nav-item flex items-center gap-3 shrink-0">
+            <Link to="/" className="nav-item flex items-center gap-3 shrink-0">
               <img src={logo} alt="Insightexus" className="h-8 sm:h-10 w-auto" />
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-2 xl:gap-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="nav-item relative px-4 xl:px-5 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 rounded-lg hover:bg-muted/50"
-                >
-                  {link.name}
-                </a>
-              ))}
+              {navLinks.map((link) =>
+                NavItem({
+                  name: link.name,
+                  href: link.href,
+                  className:
+                    "nav-item relative px-4 xl:px-5 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 rounded-lg hover:bg-muted/50",
+                })
+              )}
             </div>
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-4">
-              <a
-                href="#contact"
-                className="nav-item btn-primary text-sm py-2.5 px-6"
-              >
+              <a href="#contact" className="nav-item btn-primary text-sm py-2.5 px-6">
                 Get Started
               </a>
             </div>
@@ -116,16 +131,14 @@ const Navbar = () => {
           
           {/* Menu Panel */}
           <div className="absolute top-[72px] left-0 right-0 bg-background border-b border-border p-6 space-y-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={handleLinkClick}
-                className="mobile-menu-item block px-4 py-3 text-lg font-medium text-foreground hover:text-primary hover:bg-muted/50 rounded-xl transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              NavItem({
+                name: link.name,
+                href: link.href,
+                className:
+                  "mobile-menu-item block px-4 py-3 text-lg font-medium text-foreground hover:text-primary hover:bg-muted/50 rounded-xl transition-colors",
+              })
+            )}
             <div className="pt-4 border-t border-border mt-4">
               <a
                 href="#contact"
