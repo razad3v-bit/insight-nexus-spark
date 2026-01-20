@@ -11,6 +11,7 @@ import Testimonials from '@/components/Testimonials';
 import Team from '@/components/Team';
 import TechStack from '@/components/TechStack';
 import Blog from '@/components/Blog';
+import FAQ from '@/components/FAQ';
 import CTA from '@/components/CTA';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
@@ -30,6 +31,7 @@ const Index = () => {
         <Projects />
         <Process />
         <Testimonials />
+        <FAQ />
         <Team />
         <TechStack />
         <Blog />
