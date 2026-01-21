@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import BrandMark from "@/components/BrandMark";
 
 const Navbar = () => {
   const navRef = useRef<HTMLElement>(null);
@@ -83,9 +84,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link to="/" className="nav-item flex items-center gap-3 shrink-0">
               <img src={logo} alt="Insightexus" className="h-8 sm:h-10 w-auto" />
-              <span className="font-display font-semibold tracking-tight text-base sm:text-lg text-gradient leading-none">
-                InsightExus
-              </span>
+              <BrandMark />
             </Link>
 
             {/* Desktop Navigation */}
