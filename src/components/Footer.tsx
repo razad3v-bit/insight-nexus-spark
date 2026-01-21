@@ -1,5 +1,6 @@
 import logo from '@/assets/logo.png';
 import { Github, Linkedin, Twitter } from 'lucide-react';
+import BrandMark from '@/components/BrandMark';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -33,7 +34,10 @@ const Footer = () => {
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
           <div className="sm:col-span-2">
-            <img src={logo} alt="Insightexus" className="h-10 sm:h-12 w-auto mb-4 sm:mb-6" />
+            <div className="flex items-center gap-3 mb-4 sm:mb-6">
+              <img src={logo} alt="InsightExus" className="h-10 sm:h-12 w-auto" />
+              <BrandMark className="text-lg sm:text-xl" />
+            </div>
             <p className="text-muted-foreground text-sm sm:text-base max-w-md mb-4 sm:mb-6">
               Building innovative software solutions that drive business growth. Partner with us
               to transform your digital vision into reality.
@@ -87,7 +91,7 @@ const Footer = () => {
 
         <div className="pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm">
-            © {currentYear} Insightexus. All rights reserved.
+            © {currentYear} InsightExus. All rights reserved.
           </p>
           <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
             <a href="#" className="hover:text-primary transition-colors">

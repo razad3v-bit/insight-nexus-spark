@@ -21,6 +21,9 @@ import Footer from '@/components/Footer';
 import Clients from '@/components/Clients';
 import Awards from '@/components/Awards';
 import Comparison from '@/components/Comparison';
+import CaseStudiesTeaser from '@/components/CaseStudiesTeaser';
+import EngagementModels from '@/components/EngagementModels';
+import Principles from '@/components/Principles';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -36,12 +39,15 @@ const Index = () => {
         <About />
         <WhyChooseUs />
         <Projects />
+        <CaseStudiesTeaser />
         <ImpactMetrics />
         <Process />
+        <EngagementModels />
         <Testimonials />
         <Industries />
         <Awards />
         <Comparison />
+        <Principles />
         <FAQ />
         <Team />
         <TechStack />
