@@ -83,8 +83,8 @@ const Navbar = () => {
             {/* Logo */}
             <Link to="/" className="nav-item flex items-center gap-3 shrink-0">
               <img src={logo} alt="Insightexus" className="h-8 sm:h-10 w-auto" />
-              <span className="font-display font-semibold tracking-tight text-base sm:text-lg text-foreground leading-none">
-                Insightexus
+              <span className="font-display font-semibold tracking-tight text-base sm:text-lg text-gradient leading-none">
+                InsightExus
               </span>
             </Link>
 
