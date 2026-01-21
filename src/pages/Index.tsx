@@ -18,6 +18,9 @@ import Newsletter from '@/components/Newsletter';
 import CTA from '@/components/CTA';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import Clients from '@/components/Clients';
+import Awards from '@/components/Awards';
+import Comparison from '@/components/Comparison';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -28,6 +31,7 @@ const Index = () => {
       <div className={`min-h-screen bg-background overflow-x-hidden ${loading ? 'invisible' : 'visible'}`}>
         <Navbar />
         <Hero />
+        <Clients />
         <Services />
         <About />
         <WhyChooseUs />
@@ -36,6 +40,8 @@ const Index = () => {
         <Process />
         <Testimonials />
         <Industries />
+        <Awards />
+        <Comparison />
         <FAQ />
         <Team />
         <TechStack />
