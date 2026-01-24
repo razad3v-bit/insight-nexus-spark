@@ -149,63 +149,117 @@ const Hero = () => {
         delay: 0.5,
       });
 
-      // Scroll-based parallax
+      // Enhanced scroll-based parallax with multiple layers
       ScrollTrigger.create({
         trigger: heroRef.current,
         start: 'top top',
         end: 'bottom top',
-        scrub: 1,
+        scrub: 0.5,
         onUpdate: (self) => {
           const progress = self.progress;
           
-          gsap.to('.parallax-slow', {
-            y: progress * 100,
+          // Slowest layer - background orbs
+          gsap.to('.parallax-bg', {
+            y: progress * 150,
+            scale: 1 - progress * 0.1,
             ease: 'none',
             duration: 0,
           });
           
+          // Slow layer - orbit rings
+          gsap.to('.parallax-slow', {
+            y: progress * 100,
+            rotationZ: progress * 10,
+            ease: 'none',
+            duration: 0,
+          });
+          
+          // Medium layer - floating badges
+          gsap.to('.parallax-medium', {
+            y: progress * 180,
+            ease: 'none',
+            duration: 0,
+          });
+          
+          // Fast layer - decorative elements
           gsap.to('.parallax-fast', {
-            y: progress * 200,
+            y: progress * 250,
             ease: 'none',
             duration: 0,
           });
 
+          // Hero content fades and moves up
           gsap.to('.hero-content-left', {
+            y: progress * 80,
+            opacity: 1 - progress * 0.7,
+            ease: 'none',
+            duration: 0,
+          });
+
+          // Grid parallax
+          gsap.to('.parallax-grid', {
             y: progress * 50,
-            opacity: 1 - progress * 0.5,
+            opacity: 0.015 - progress * 0.01,
             ease: 'none',
             duration: 0,
           });
         },
       });
 
-      // Mouse parallax for interactive feel
+      // Enhanced mouse parallax for interactive 3D feel
       const handleMouseMove = (e: MouseEvent) => {
         const { clientX, clientY } = e;
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
-        const moveX = (clientX - centerX) / 30;
-        const moveY = (clientY - centerY) / 30;
+        const moveX = (clientX - centerX) / 25;
+        const moveY = (clientY - centerY) / 25;
 
+        // Background orbs - slowest response
+        gsap.to('.parallax-bg', {
+          x: moveX * 0.3,
+          y: moveY * 0.2,
+          duration: 2,
+          ease: 'power2.out',
+        });
+
+        // Orbit rings - 3D rotation effect
         gsap.to('.parallax-slow', {
-          x: moveX * 0.5,
-          rotationY: moveX * 0.02,
-          rotationX: -moveY * 0.02,
+          x: moveX * 0.6,
+          rotationY: moveX * 0.08,
+          rotationX: -moveY * 0.06,
+          duration: 1.5,
+          ease: 'power2.out',
+        });
+
+        // Floating badges - medium response
+        gsap.to('.parallax-medium', {
+          x: moveX * 1.2,
+          y: moveY * 0.6,
           duration: 1.2,
           ease: 'power2.out',
         });
 
+        // Fast elements - quick response
         gsap.to('.parallax-fast', {
-          x: moveX * 1.5,
-          y: moveY * 0.5,
-          duration: 1,
+          x: moveX * 2,
+          y: moveY * 1,
+          duration: 0.8,
           ease: 'power2.out',
         });
 
+        // Orbit ring 3D tilt
         gsap.to('.orbit-ring', {
-          rotationY: moveX * 0.05,
-          rotationX: -moveY * 0.05,
+          rotationY: moveX * 0.1,
+          rotationX: -moveY * 0.08,
           duration: 1.5,
+          ease: 'power2.out',
+        });
+
+        // Subtle text 3D effect
+        gsap.to('.hero-line', {
+          rotationY: moveX * 0.02,
+          rotationX: -moveY * 0.01,
+          duration: 1.8,
           ease: 'power2.out',
         });
       };
@@ -223,21 +277,27 @@ const Hero = () => {
       className="relative w-screen min-h-screen bg-background flex items-center overflow-hidden"
       style={{ marginLeft: 'calc(-50vw + 50%)' }}
     >
-      {/* Animated gradient orbs */}
+      {/* Animated gradient orbs - Background parallax layer */}
       <div
         ref={orb1Ref}
-        className="parallax-slow absolute top-10 right-[5%] w-[400px] sm:w-[500px] lg:w-[600px] h-[400px] sm:h-[500px] lg:h-[600px] rounded-full opacity-40 blur-3xl pointer-events-none"
+        className="parallax-bg absolute top-10 right-[5%] w-[400px] sm:w-[500px] lg:w-[600px] h-[400px] sm:h-[500px] lg:h-[600px] rounded-full opacity-40 blur-3xl pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsl(192 60% 50% / 0.5) 0%, transparent 60%)' }}
       />
       <div
         ref={orb2Ref}
-        className="parallax-fast absolute bottom-10 left-[10%] w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] rounded-full opacity-30 blur-3xl pointer-events-none"
+        className="parallax-bg absolute bottom-10 left-[10%] w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] rounded-full opacity-30 blur-3xl pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsl(280 50% 50% / 0.4) 0%, transparent 60%)' }}
       />
+      
+      {/* Additional floating orb for depth */}
+      <div
+        className="parallax-fast absolute top-1/3 left-1/4 w-[200px] sm:w-[300px] h-[200px] sm:h-[300px] rounded-full opacity-20 blur-3xl pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4) 0%, transparent 60%)' }}
+      />
 
-      {/* Subtle grid */}
+      {/* Subtle grid - with parallax */}
       <div 
-        className="absolute inset-0 opacity-[0.015] pointer-events-none"
+        className="parallax-grid absolute inset-0 opacity-[0.015] pointer-events-none"
         style={{
           backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
                             linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
@@ -335,8 +395,8 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Floating badges - Hidden on very small screens */}
-            <div className="hero-badge hidden sm:flex absolute top-4 left-0 lg:-left-4 xl:-left-8 glass rounded-2xl p-3 lg:p-4 items-center gap-3 shadow-xl">
+            {/* Floating badges - With medium parallax layer */}
+            <div className="hero-badge parallax-medium hidden sm:flex absolute top-4 left-0 lg:-left-4 xl:-left-8 glass rounded-2xl p-3 lg:p-4 items-center gap-3 shadow-xl">
               <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
                 <Zap className="w-5 lg:w-6 h-5 lg:h-6 text-primary" />
               </div>
@@ -346,7 +406,7 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="hero-badge hidden sm:flex absolute top-1/4 right-0 lg:-right-4 glass rounded-2xl p-3 lg:p-4 items-center gap-3 shadow-xl">
+            <div className="hero-badge parallax-medium hidden sm:flex absolute top-1/4 right-0 lg:-right-4 glass rounded-2xl p-3 lg:p-4 items-center gap-3 shadow-xl">
               <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
                 <Globe className="w-5 lg:w-6 h-5 lg:h-6 text-primary" />
               </div>
@@ -356,7 +416,7 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="hero-badge hidden sm:flex absolute bottom-8 left-0 lg:left-4 glass rounded-2xl p-3 lg:p-4 items-center gap-3 shadow-xl">
+            <div className="hero-badge parallax-medium hidden sm:flex absolute bottom-8 left-0 lg:left-4 glass rounded-2xl p-3 lg:p-4 items-center gap-3 shadow-xl">
               <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
                 <Layers className="w-5 lg:w-6 h-5 lg:h-6 text-primary" />
               </div>
