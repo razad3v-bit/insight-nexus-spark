@@ -12,6 +12,15 @@ const Hero = () => {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Kill any existing ScrollTriggers to prevent conflicts on refresh
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    
+    // Clear any existing inline styles from previous animations
+    const elementsToReset = heroRef.current?.querySelectorAll('.hero-line, .hero-subtitle, .hero-cta, .hero-stat, .orbit-ring, .orbit-icon, .hero-badge');
+    elementsToReset?.forEach(el => {
+      gsap.set(el, { clearProps: 'all' });
+    });
+
     const ctx = gsap.context(() => {
       // Initial state - hide elements
       gsap.set(['.hero-line', '.hero-subtitle', '.hero-cta', '.hero-stat', '.orbit-ring', '.orbit-icon', '.hero-badge'], {
@@ -20,7 +29,7 @@ const Hero = () => {
 
       const tl = gsap.timeline({ 
         defaults: { ease: 'power4.out' },
-        delay: 0.2,
+        delay: 0.3,
       });
 
       // Dramatic text reveal with clip-path
@@ -268,7 +277,11 @@ const Hero = () => {
       return () => window.removeEventListener('mousemove', handleMouseMove);
     }, heroRef);
 
-    return () => ctx.revert();
+    return () => {
+      // Properly cleanup all GSAP animations and ScrollTriggers
+      ctx.revert();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
