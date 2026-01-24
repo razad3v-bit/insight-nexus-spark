@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Zap, Globe, Layers, Code2, Cpu, Database, Terminal } from 'lucide-react';
@@ -10,17 +10,40 @@ const Hero = () => {
   const orb1Ref = useRef<HTMLDivElement>(null);
   const orb2Ref = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    // Kill any existing ScrollTriggers to prevent conflicts on refresh
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    
-    // Clear any existing inline styles from previous animations
-    const elementsToReset = heroRef.current?.querySelectorAll('.hero-line, .hero-subtitle, .hero-cta, .hero-stat, .orbit-ring, .orbit-icon, .hero-badge');
-    elementsToReset?.forEach(el => {
-      gsap.set(el, { clearProps: 'all' });
-    });
+    // Wait for the page to be visible (preloader to complete)
+    const checkVisibilityAndAnimate = () => {
+      const parent = heroRef.current?.closest('.visible');
+      if (!parent && !hasAnimated) {
+        // Page still loading, check again
+        requestAnimationFrame(checkVisibilityAndAnimate);
+        return;
+      }
+      
+      if (hasAnimated) return;
+      setHasAnimated(true);
+      
+      // Kill any existing ScrollTriggers to prevent conflicts
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // Clear any existing inline styles from previous animations
+      const elementsToReset = heroRef.current?.querySelectorAll('.hero-line, .hero-subtitle, .hero-cta, .hero-stat, .orbit-ring, .orbit-icon, .hero-badge');
+      elementsToReset?.forEach(el => {
+        gsap.set(el, { clearProps: 'all' });
+      });
 
+      runAnimations();
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(checkVisibilityAndAnimate, 100);
+    
+    return () => clearTimeout(timer);
+  }, [hasAnimated]);
+
+  const runAnimations = () => {
     const ctx = gsap.context(() => {
       // Initial state - hide elements
       gsap.set(['.hero-line', '.hero-subtitle', '.hero-cta', '.hero-stat', '.orbit-ring', '.orbit-icon', '.hero-badge'], {
@@ -274,15 +297,14 @@ const Hero = () => {
       };
 
       window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
+      
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        ctx.revert();
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      };
     }, heroRef);
-
-    return () => {
-      // Properly cleanup all GSAP animations and ScrollTriggers
-      ctx.revert();
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
+  };
 
   return (
     <section
