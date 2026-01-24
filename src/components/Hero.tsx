@@ -1,65 +1,137 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Zap, Globe, Layers, Code2, Cpu, Database, Terminal } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const orb1Ref = useRef<HTMLDivElement>(null);
   const orb2Ref = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      // Initial state - hide elements
+      gsap.set(['.hero-line', '.hero-subtitle', '.hero-cta', '.hero-stat', '.orbit-ring', '.orbit-icon', '.hero-badge'], {
+        opacity: 0,
+      });
 
-      tl.from('.hero-line', {
-        y: 120,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.15,
-      })
-      .from('.hero-subtitle', {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-      }, '-=0.6')
-      .from('.hero-cta', {
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-      }, '-=0.4')
-      .from('.hero-stat', {
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.15,
-      }, '-=0.3')
-      .from('.orbit-ring', {
-        scale: 0,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: 'elastic.out(1, 0.5)',
-      }, '-=0.6')
-      .from('.orbit-icon', {
-        scale: 0,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: 'back.out(1.7)',
-      }, '-=0.4')
-      .from('.hero-badge', {
-        scale: 0,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'back.out(1.7)',
-      }, '-=0.3');
+      const tl = gsap.timeline({ 
+        defaults: { ease: 'power4.out' },
+        delay: 0.2,
+      });
 
-      // Floating orbs
+      // Dramatic text reveal with clip-path
+      tl.fromTo('.hero-line', 
+        { 
+          y: 120, 
+          opacity: 0,
+          rotationX: -80,
+          transformOrigin: 'top center',
+        },
+        {
+          y: 0,
+          opacity: 1,
+          rotationX: 0,
+          duration: 1.4,
+          stagger: 0.12,
+          ease: 'power4.out',
+        }
+      )
+      // Subtitle with blur effect
+      .fromTo('.hero-subtitle', 
+        { 
+          y: 60, 
+          opacity: 0,
+          filter: 'blur(10px)',
+        },
+        {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1,
+        }, '-=0.8')
+      // CTAs with scale bounce
+      .fromTo('.hero-cta', 
+        { 
+          y: 40, 
+          opacity: 0,
+          scale: 0.8,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'back.out(1.7)',
+        }, '-=0.5')
+      // Stats counter animation
+      .fromTo('.hero-stat', 
+        { 
+          y: 50, 
+          opacity: 0,
+          scale: 0.9,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: 'power3.out',
+        }, '-=0.4')
+      // Orbit rings with elastic bounce
+      .fromTo('.orbit-ring', 
+        { 
+          scale: 0, 
+          opacity: 0,
+          rotation: -180,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: 'elastic.out(1, 0.6)',
+        }, '-=0.8')
+      // Orbit icons pop in
+      .fromTo('.orbit-icon', 
+        { 
+          scale: 0, 
+          opacity: 0,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'back.out(2)',
+        }, '-=0.6')
+      // Floating badges slide in
+      .fromTo('.hero-badge', 
+        { 
+          x: (i) => i % 2 === 0 ? -100 : 100,
+          opacity: 0,
+          scale: 0.8,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: 'power3.out',
+        }, '-=0.4');
+
+      // Floating orbs with continuous animation
       gsap.to(orb1Ref.current, {
-        y: -40,
-        x: 20,
+        y: -50,
+        x: 30,
+        scale: 1.1,
         duration: 4,
         repeat: -1,
         yoyo: true,
@@ -67,8 +139,9 @@ const Hero = () => {
       });
 
       gsap.to(orb2Ref.current, {
-        y: 30,
-        x: -30,
+        y: 40,
+        x: -40,
+        scale: 0.9,
         duration: 5,
         repeat: -1,
         yoyo: true,
@@ -76,25 +149,63 @@ const Hero = () => {
         delay: 0.5,
       });
 
-      // Mouse parallax
+      // Scroll-based parallax
+      ScrollTrigger.create({
+        trigger: heroRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          
+          gsap.to('.parallax-slow', {
+            y: progress * 100,
+            ease: 'none',
+            duration: 0,
+          });
+          
+          gsap.to('.parallax-fast', {
+            y: progress * 200,
+            ease: 'none',
+            duration: 0,
+          });
+
+          gsap.to('.hero-content-left', {
+            y: progress * 50,
+            opacity: 1 - progress * 0.5,
+            ease: 'none',
+            duration: 0,
+          });
+        },
+      });
+
+      // Mouse parallax for interactive feel
       const handleMouseMove = (e: MouseEvent) => {
         const { clientX, clientY } = e;
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
-        const moveX = (clientX - centerX) / 40;
-        const moveY = (clientY - centerY) / 40;
+        const moveX = (clientX - centerX) / 30;
+        const moveY = (clientY - centerY) / 30;
 
         gsap.to('.parallax-slow', {
           x: moveX * 0.5,
+          rotationY: moveX * 0.02,
+          rotationX: -moveY * 0.02,
+          duration: 1.2,
+          ease: 'power2.out',
+        });
+
+        gsap.to('.parallax-fast', {
+          x: moveX * 1.5,
           y: moveY * 0.5,
           duration: 1,
           ease: 'power2.out',
         });
 
-        gsap.to('.parallax-fast', {
-          x: moveX * 1.2,
-          y: moveY * 1.2,
-          duration: 1,
+        gsap.to('.orbit-ring', {
+          rotationY: moveX * 0.05,
+          rotationX: -moveY * 0.05,
+          duration: 1.5,
           ease: 'power2.out',
         });
       };
@@ -135,14 +246,14 @@ const Hero = () => {
       />
 
       <div className="relative z-10 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20 pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-16 lg:pb-20">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
+        <div ref={contentRef} className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
           {/* Left content */}
-          <div className="space-y-6 sm:space-y-8">
-            <div className="overflow-hidden">
+          <div className="hero-content-left space-y-6 sm:space-y-8" style={{ perspective: '1000px' }}>
+            <div className="overflow-hidden" style={{ perspective: '1200px' }}>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[0.95] tracking-tight">
-                <span className="hero-line block text-foreground">Building</span>
-                <span className="hero-line block text-gradient">tomorrow's</span>
-                <span className="hero-line block text-foreground">software</span>
+                <span className="hero-line block text-foreground will-change-transform">Building</span>
+                <span className="hero-line block text-gradient will-change-transform">tomorrow's</span>
+                <span className="hero-line block text-foreground will-change-transform">software</span>
               </h1>
             </div>
 
@@ -177,7 +288,7 @@ const Hero = () => {
           </div>
 
           {/* Right visual - Orbiting tech stack */}
-          <div className="relative h-[350px] sm:h-[450px] lg:h-[550px] xl:h-[600px] flex items-center justify-center parallax-slow">
+          <div className="relative h-[350px] sm:h-[450px] lg:h-[550px] xl:h-[600px] flex items-center justify-center parallax-slow" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
             {/* Outer orbit ring */}
             <div 
               className="orbit-ring absolute w-[280px] sm:w-[360px] lg:w-[420px] xl:w-[480px] h-[280px] sm:h-[360px] lg:h-[420px] xl:h-[480px] rounded-full border border-primary/20"
