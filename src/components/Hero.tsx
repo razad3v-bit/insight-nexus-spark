@@ -25,9 +25,6 @@ const Hero = () => {
       if (hasAnimated) return;
       setHasAnimated(true);
       
-      // Kill any existing ScrollTriggers to prevent conflicts
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      
       // Clear any existing inline styles from previous animations
       const elementsToReset = heroRef.current?.querySelectorAll('.hero-line, .hero-subtitle, .hero-cta, .hero-stat, .orbit-ring, .orbit-icon, .hero-badge');
       elementsToReset?.forEach(el => {
@@ -300,8 +297,6 @@ const Hero = () => {
       
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
-        ctx.revert();
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       };
     }, heroRef);
   };
