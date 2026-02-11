@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { CheckCircle2, Award, Users, Rocket, Heart, Target, Code, Globe, Shield, Lightbulb, Braces, Cpu, Layers, Sparkles } from 'lucide-react';
+import { CheckCircle2, Award, Users, Rocket, Heart, Target, Shield, Lightbulb, Sparkles, Binary, Fingerprint, Network, BarChart3, Workflow } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -94,51 +94,45 @@ const About = () => {
         }
       );
 
-      // --- 3D floating cards pop in ---
-      gsap.fromTo('.about-float-card',
-        { scale: 0, opacity: 0, rotation: -15 },
+      // --- Stacked layers cascade in ---
+      gsap.fromTo('.about-layer-card',
+        { y: 80, opacity: 0, rotationX: -25, scale: 0.85 },
         {
           scrollTrigger: { trigger: '.about-visual', start: 'top 80%', once: true },
-          scale: 1, opacity: 1, rotation: 0,
-          duration: 0.8, stagger: 0.15, ease: 'back.out(1.7)', delay: 0.5,
+          y: 0, opacity: 1, rotationX: 0, scale: 1,
+          duration: 0.9, stagger: 0.18, ease: 'power3.out', delay: 0.4,
         }
       );
 
-      // --- Orbit ring scale-in ---
-      gsap.fromTo('.about-orbit',
+      // --- Data stream lines animate ---
+      gsap.fromTo('.about-stream-line',
+        { scaleX: 0, opacity: 0 },
+        {
+          scrollTrigger: { trigger: '.about-visual', start: 'top 80%', once: true },
+          scaleX: 1, opacity: 1,
+          duration: 1, stagger: 0.1, ease: 'power2.out', delay: 0.8,
+        }
+      );
+
+      // --- Floating metric badges pop ---
+      gsap.fromTo('.about-metric-badge',
         { scale: 0, opacity: 0 },
         {
           scrollTrigger: { trigger: '.about-visual', start: 'top 80%', once: true },
           scale: 1, opacity: 1,
-          duration: 1.2, stagger: 0.2, ease: 'elastic.out(1, 0.5)', delay: 0.3,
+          duration: 0.7, stagger: 0.12, ease: 'back.out(2)', delay: 1,
         }
       );
 
-      // --- Continuous floating animation for cards ---
-      gsap.utils.toArray<HTMLElement>('.about-float-card').forEach((card, i) => {
+      // --- Continuous subtle floating for layer cards ---
+      gsap.utils.toArray<HTMLElement>('.about-layer-card').forEach((card, i) => {
         gsap.to(card, {
-          y: i % 2 === 0 ? -12 : 12,
-          x: i % 2 === 0 ? 6 : -6,
-          rotation: i % 2 === 0 ? 2 : -2,
-          duration: 3 + i * 0.5,
+          y: i % 2 === 0 ? -8 : 8,
+          rotation: i % 2 === 0 ? 1 : -1,
+          duration: 3.5 + i * 0.4,
           repeat: -1, yoyo: true, ease: 'sine.inOut',
-          delay: i * 0.3,
+          delay: i * 0.2,
         });
-      });
-
-      // --- Multi-layer scroll parallax ---
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 0.8,
-        onUpdate: (self) => {
-          const p = self.progress;
-          gsap.set('.about-parallax-slow', { y: p * -60 });
-          gsap.set('.about-parallax-medium', { y: p * -120 });
-          gsap.set('.about-parallax-fast', { y: p * -180 });
-          gsap.set('.about-glow-orb', { y: p * 80, scale: 1 + p * 0.15 });
-        },
       });
 
       // --- Mouse-driven 3D tilt on visual ---
@@ -151,15 +145,21 @@ const About = () => {
         const dy = (e.clientY - cy) / rect.height;
 
         gsap.to('.about-3d-scene', {
-          rotationY: dx * 12,
-          rotationX: -dy * 8,
+          rotationY: dx * 14,
+          rotationX: -dy * 10,
           duration: 1.2, ease: 'power2.out',
         });
 
-        gsap.to('.about-float-card', {
-          x: (i) => dx * (15 + i * 8),
-          y: (i) => dy * (10 + i * 5),
+        gsap.to('.about-layer-card', {
+          x: (i) => dx * (10 + i * 6),
+          y: (i) => dy * (8 + i * 4),
           duration: 1, ease: 'power2.out',
+        });
+
+        gsap.to('.about-metric-badge', {
+          x: (i) => dx * (20 + i * 10),
+          y: (i) => dy * (12 + i * 6),
+          duration: 0.8, ease: 'power2.out',
         });
       };
 
@@ -257,74 +257,102 @@ const About = () => {
             </div>
           </div>
 
-          {/* Right visual - 3D interactive scene */}
+          {/* Right visual - Layered dashboard / data-stream aesthetic */}
           <div ref={visualRef} className="about-visual relative h-[400px] sm:h-[500px] lg:h-[600px]" style={{ perspective: '1000px' }}>
             <div className="about-3d-scene absolute inset-0 flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
-              {/* Orbit rings */}
-              <div className="about-orbit about-parallax-slow absolute w-[260px] sm:w-[340px] lg:w-[400px] h-[260px] sm:h-[340px] lg:h-[400px] rounded-full border border-primary/15"
-                style={{ animation: 'aboutSpin 30s linear infinite' }} />
-              <div className="about-orbit about-parallax-slow absolute w-[190px] sm:w-[250px] lg:w-[290px] h-[190px] sm:h-[250px] lg:h-[290px] rounded-full border border-primary/25"
-                style={{ animation: 'aboutSpin 22s linear infinite reverse' }} />
-              <div className="about-orbit absolute w-[120px] sm:w-[160px] lg:w-[180px] h-[120px] sm:h-[160px] lg:h-[180px] rounded-full border-2 border-primary/35"
-                style={{ animation: 'aboutSpin 15s linear infinite' }} />
 
-              {/* Pulsing core */}
-              <div className="about-orbit relative w-20 sm:w-24 lg:w-28 h-20 sm:h-24 lg:h-28 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/50 flex items-center justify-center shadow-glow">
-                <div className="absolute inset-0 rounded-2xl bg-primary/15 animate-ping opacity-40" />
-                <div className="relative flex items-center justify-center">
-                  <Braces className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 text-primary" />
+              {/* Background glow pulse */}
+              <div className="absolute w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] rounded-full opacity-30 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsl(192 35% 52% / 0.3) 0%, transparent 65%)', animation: 'aboutPulse 4s ease-in-out infinite' }} />
+
+              {/* Stacked tilted layer cards */}
+              <div className="about-layer-card about-parallax-slow absolute w-[240px] sm:w-[300px] lg:w-[340px] h-[140px] sm:h-[170px] lg:h-[190px] rounded-2xl glass border border-primary/10 shadow-card"
+                style={{ transform: 'translateZ(-60px) translateY(40px)', transformStyle: 'preserve-3d' }}>
+                <div className="p-4 sm:p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4 text-primary/60" />
+                      <span className="text-xs text-muted-foreground font-medium">Analytics</span>
+                    </div>
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-primary/30" />
+                      <div className="w-2 h-2 rounded-full bg-primary/20" />
+                      <div className="w-2 h-2 rounded-full bg-primary/10" />
+                    </div>
+                  </div>
+                  {/* Mini bar chart */}
+                  <div className="flex items-end gap-1.5 mt-3">
+                    {[40, 65, 45, 80, 55, 70, 90, 60, 75, 85].map((h, i) => (
+                      <div key={i} className="about-stream-line flex-1 rounded-sm bg-primary/20 origin-bottom"
+                        style={{ height: `${h}%`, transformOrigin: 'bottom' }} />
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Orbiting node dots */}
-              <div className="about-orbit absolute w-[260px] sm:w-[340px] lg:w-[400px] h-[260px] sm:h-[340px] lg:h-[400px]"
-                style={{ animation: 'aboutSpin 30s linear infinite' }}>
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary/60 shadow-glow" />
-                <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/40" />
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary/60 shadow-glow" />
-                <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/40" />
-              </div>
-
-              {/* Floating feature cards */}
-              <div className="about-float-card about-parallax-fast absolute top-2 right-2 sm:right-8 glass rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-xl">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                  <Code className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold text-xs sm:text-sm">Clean Code</div>
-                  <div className="text-xs text-muted-foreground">Best practices</div>
-                </div>
-              </div>
-
-              <div className="about-float-card about-parallax-medium absolute top-12 sm:top-16 left-0 sm:left-2 glass rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-xl">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold text-xs sm:text-sm">Global Reach</div>
-                  <div className="text-xs text-muted-foreground">Worldwide clients</div>
+              <div className="about-layer-card about-parallax-medium absolute w-[220px] sm:w-[280px] lg:w-[320px] h-[120px] sm:h-[150px] lg:h-[170px] rounded-2xl glass border border-primary/15 shadow-card"
+                style={{ transform: 'translateZ(-20px) translateY(-20px) translateX(20px)', transformStyle: 'preserve-3d' }}>
+                <div className="p-4 sm:p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-center gap-2">
+                    <Network className="w-4 h-4 text-primary/70" />
+                    <span className="text-xs text-muted-foreground font-medium">Architecture</span>
+                  </div>
+                  {/* Connection nodes */}
+                  <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2">
+                    {[Fingerprint, Binary, Workflow].map((Icon, i) => (
+                      <div key={i} className="relative">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center">
+                          <Icon className="w-4 sm:w-5 h-4 sm:h-5 text-primary" />
+                        </div>
+                        {i < 2 && (
+                          <div className="about-stream-line absolute top-1/2 -right-3 sm:-right-4 w-3 sm:w-4 h-px bg-primary/30 origin-left" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="about-float-card about-parallax-fast absolute bottom-16 sm:bottom-20 right-0 sm:right-4 glass rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-xl">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                  <Cpu className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold text-xs sm:text-sm">AI-Powered</div>
-                  <div className="text-xs text-muted-foreground">Smart solutions</div>
+              <div className="about-layer-card about-parallax-fast absolute w-[200px] sm:w-[260px] lg:w-[300px] h-[100px] sm:h-[130px] lg:h-[150px] rounded-2xl glass border border-primary/20 shadow-card"
+                style={{ transform: 'translateZ(20px) translateY(-80px) translateX(-10px)', transformStyle: 'preserve-3d' }}>
+                <div className="p-4 sm:p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground font-medium">System Status</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-xs text-emerald-400/80">Live</span>
+                    </div>
+                  </div>
+                  {/* Simulated data stream lines */}
+                  <div className="space-y-2 mt-2">
+                    {[85, 60, 95].map((w, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="about-stream-line h-1.5 rounded-full bg-primary/25 origin-left" style={{ width: `${w}%` }}>
+                          <div className="h-full rounded-full bg-primary/50" style={{ width: `${w}%` }} />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground">{w}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="about-float-card about-parallax-medium absolute bottom-4 left-2 sm:left-8 glass rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-xl">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                  <Layers className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold text-xs sm:text-sm">Full Stack</div>
-                  <div className="text-xs text-muted-foreground">End-to-end</div>
-                </div>
+              {/* Floating metric badges */}
+              <div className="about-metric-badge absolute -top-2 sm:top-2 right-0 sm:right-6 glass rounded-xl px-3 py-2 shadow-xl border border-primary/20">
+                <div className="text-lg sm:text-xl font-bold text-gradient">99.9%</div>
+                <div className="text-[10px] text-muted-foreground">Uptime</div>
               </div>
+
+              <div className="about-metric-badge absolute bottom-8 sm:bottom-12 -left-2 sm:left-0 glass rounded-xl px-3 py-2 shadow-xl border border-primary/20">
+                <div className="text-lg sm:text-xl font-bold text-gradient">&lt;200ms</div>
+                <div className="text-[10px] text-muted-foreground">Response</div>
+              </div>
+
+              <div className="about-metric-badge absolute top-1/3 -left-4 sm:-left-2 glass rounded-xl px-3 py-2 shadow-xl border border-primary/20">
+                <div className="text-lg sm:text-xl font-bold text-gradient">10x</div>
+                <div className="text-[10px] text-muted-foreground">Faster</div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -364,9 +392,9 @@ const About = () => {
       </div>
 
       <style>{`
-        @keyframes aboutSpin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        @keyframes aboutPulse {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50% { transform: scale(1.15); opacity: 0.5; }
         }
       `}</style>
     </section>
